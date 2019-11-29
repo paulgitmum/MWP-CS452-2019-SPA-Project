@@ -2,36 +2,42 @@
 
 window.onload = function () {
 
-    let to;
-    let animatedId;
-    let log = false;
 
+// declaration 
+    let token, animationKey, longitude, latitude;
 
-    //let head = document.querySelector('#head');
-    // login window 
+//...............login window....................
     let welcome = `
      User Name <input type = "text"  placeholder="mwp"/><br><br>
-Password <input type = "text" placeholder="123"/><br><br>
-  <button id = "btn" class="btn btn-primary" >Login</button>
+     Password <input type = "text" placeholder="123"/><br><br>
+     <button id = "btn" class="btn btn-primary" >Login</button>
+     <h1 class = "big" > Welcome to our beautiful city </h1> 
+     <br>
+     <h1 class = "big"> Enjoy your game! </h1><br>
+     
+    
 `;
 
-    // animation window
+//...............Animation window.................
     let animation = `  
     <h2 id= "head"></h2>
-<textarea id = "animtext"rows="20" cols="50"></textarea><br><br>
-<button id = "btnn"> Refresh  </button>
-<button id = "button">Logout</button>
+    <textarea id = "animtext"rows="25" cols="50" "animtext"></textarea><br><br>
+    <button id = "btnn"> Refresh </button>
+    <button id = "button">Logout</button>
+    <h1> Welcome to our beautiful city </h1>
+    <h1> Enjoy your game! </h1>
+
+    <hr class="new1">
 `;
-    //let ae;
 
-    // 
-    // document.querySelector("#outlet").innerHTML = animation;
-
+//................................................
     let input = document.querySelector("#outlet");
     input.innerHTML = welcome;
 
     let nextPage = document.querySelector("#btn");
     nextPage.addEventListener("click", logIn)
+
+//..............login page........................
 
     function logIn() {
 
@@ -40,28 +46,31 @@ Password <input type = "text" placeholder="123"/><br><br>
         addressFetch();
         logInFetch();
         animationFetch()
-
+        document.querySelector("#btnn").addEventListener("click", animationFetch);
     }
 
+    // displaying the log in 
     function display() {
         input.innerHTML = welcome;
 
     }
-
+// log in window 
     function backTo() {
         const out = document.querySelector("#button");
         out.addEventListener("click", display);
     }
 
+    // fetching geo- location from the server
     function addressFetch() {
+        
         navigator.geolocation.getCurrentPosition(success, failed);
         async function success(position) {
             console.log(position);
 
-            const longitude = position.coords.longitude;
-            const latitude = position.coords.latitude;
+            longitude = position.coords.longitude;
+            latitude = position.coords.latitude;
 
-            
+
             let url = `http://open.mapquestapi.com/geocoding/v1/reverse?key=V8Fi8OQYMJJNcHAaqNuEmgdy4kQTwuB9&location=${latitude},${longitude}&includeRoadMetadata=true&includeNearestIntersection=true`;
 
             let response = await fetch(url)
@@ -82,7 +91,7 @@ Password <input type = "text" placeholder="123"/><br><br>
         document.querySelector("#head").innerHTML = `Welcome all from anonymus`;
     }
 
-    // fetching the token 
+    // fetching the token from the server 
     async function logInFetch() {
 
         let urll = 'http://www.mumstudents.org/api/login';
@@ -98,40 +107,42 @@ Password <input type = "text" placeholder="123"/><br><br>
                 })
             })
         let replyBody = await response.json();
-        let rep = replyBody.to;
+        let rep = replyBody.token;
         console.log(rep)
     }
 
-    to = `eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtd2EiLCJpc3N1ZWRBdCI6IjIwMTktMTEtMjciLCJ1c2VybmFtZSI6Im13cCJ9.U9ciwh5lcPwFlJdxhNQkeiMc7AMYAnawfKNidw8CNDpTIUjNBL_EtDqkXG4qGOF8H_Ve1S2Gg2PwmCYOkfgmWA`;
 
+
+    token = `eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtd2EiLCJpc3N1ZWRBdCI6IjIwMTktMTEtMjciLCJ1c2VybmFtZSI6Im13cCJ9.U9ciwh5lcPwFlJdxhNQkeiMc7AMYAnawfKNidw8CNDpTIUjNBL_EtDqkXG4qGOF8H_Ve1S2Gg2PwmCYOkfgmWA`;
+
+
+    // fetching the animations from the server 
     async function animationFetch() {
-        let url = "http://www.mumstudents.org/api/animation ";
+        let url = "http://www.mumstudents.org/api/animation";
 
-        //  if (animatedId) clearInterval(animatedId) 
-
+       
         const response = await fetch(url, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/text',
-                Authorization: `Bearer ${to}`
+                Authorization: `Bearer ${token}`
             }
 
         })
+
+
+        if (animationKey) clearInterval(animationKey)
 
         let anim = await response.text();
         let frames = anim.split('=====\n');
         let framesLength = frames.length;
         let currFrame = 0;
-        animatedId = setInterval(() => {
+        animationKey = setInterval(() => {
             document.querySelector('#animtext').value = frames[currFrame];
             currFrame++;
             if (currFrame === framesLength) currFrame = 0;
         }, 200)
 
     }
-
-
-  
-
-
+    
 }

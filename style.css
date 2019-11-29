@@ -1,0 +1,35 @@
+#animtext {
+	background-image: url(water_PNG50182.png);
+	background-size: 1800px;
+	background-repeat: no-repeat;
+}
+
+body {
+
+background-image: url("Smart-Cities-Solutions.png");
+background-repeat: no-repeat;
+background-position: right; 
+background-size: 1500px;
+
+
+}
+hr.new1 {
+
+	border-top: 1px solid rgb(90, 85, 85);
+
+  }
+
+  hr.new4 {
+	border: 1px solid red;
+  }
+
+.line{
+
+    width: 2000px;
+    height: 47px;
+    border-bottom: 1px solid black;
+	position: relative;
+	
+}
+
+ 
