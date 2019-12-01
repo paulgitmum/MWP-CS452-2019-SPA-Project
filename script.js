@@ -6,12 +6,15 @@ window.onload = function () {
     let token, animationKey, longitude, latitude;
 
     //...............login templet....................
+    // login  templete with sample text
     let welcome = `
      User Name <input type = "text"  placeholder="mwp"/><br><br>
      Password <input type = "text" placeholder="123"/><br><br>
      <button id = "btn" class="btn btn-primary" >Login</button>
+
      <h1 class = "big" > Welcome to our beautiful city </h1> 
      <h1 class = "big"> Enjoy your game! </h1><br>
+
      <p class = "big" >Fairfield is a city in, and the county seat of, Jefferson <br> 
      County, Iowa, United States. <br><br>It has a population 
      totaling 9,464 <br>people according to the 2010 census.<br><br><br> 
@@ -26,11 +29,11 @@ window.onload = function () {
 `;
     //...............Animation templet.................
     let animation = `  
-    <h2 id= "head"></h2>
+    <h3 id= "head"></h3>
     <textarea id = "animtext"rows="25" cols="50" "animtext"></textarea><br><br>
     <button id = "btnn"> Refresh </button>
     <button id = "button">Logout</button>
-    <h1> Welcome to our beautiful city! </h1>
+    <h2> Welcome to our beautiful city! </h2>
     <h2> Click the Refresh button <br> to play a new game! </h2>
     <hr class="new1">
 `;
@@ -38,46 +41,46 @@ window.onload = function () {
     //................................................
 
     let input = document.querySelector("#outlet");
-    // displaying the welcome page 
+    // displays the welcome page 
     input.innerHTML = welcome;
 
-    let nextPage = document.querySelector("#btn");
-    nextPage.addEventListener("click", logIn)
+    let next = document.querySelector("#btn");
+    next.addEventListener("click", logIn)
 
     //..............login page........................
 
     function logIn() {
         // loading the animation page 
         input.innerHTML = animation;
-        // calling back the logout page 
-        backTo();
-        // invoking the geo- location 
-        addressFetch();
-        // invoking the login 
-        logInFetch();
+        backTo(); // calling back the logout page 
+        addressFetch();  // invoking the geo- location 
+        logInFetch();  // invoks the login page
         animationFetch()  // invoking the fetch animation function 
         // adding the event listener to the refresh button 
-        document.querySelector("#btnn").addEventListener("click", animationFetch);
-        // document.querySelector("button").addEventListener("click", backTo)
+        // document.querySelector("#btnn").addEventListener("click", animationFetch);
     }
 
     // displaying the log in page 
     function display() {
-        input.innerHTML = welcome;    // displays the welcome page 
+        input.innerHTML = welcome;   
         clearInterval(animationKey); // stops the ongoing process after loging out 
+        //re load the login page 
+        let nextPage = document.querySelector("#btn");
+        nextPage.addEventListener("click", logIn)
     }
     // log in window 
     function backTo() {
         // adding an event listener to the logout page 
         const out = document.querySelector("#button");
         out.addEventListener("click", display);
-        // document.querySelector("btn").addEventListener("click", logIn)
+        document.querySelector("#btnn").addEventListener("click", animationFetch);
+
     }
     // fetching geo- location from the server
     function addressFetch() {
+        // used to get current position of devise
         navigator.geolocation.getCurrentPosition(success, failed);
         async function success(position) {
-            console.log(position);
             // savint the longitude and latitude 
             longitude = position.coords.longitude;
             latitude = position.coords.latitude;
@@ -100,9 +103,8 @@ window.onload = function () {
         document.querySelector("#head").innerHTML = `Welcome all from anonymus`;
     }
     // fetching the token from the server 
-    async function logInFetch() {
-        // fetching address for token  
-        let urll = 'http://www.mumstudents.org/api/login';
+    async function logInFetch() { 
+        let urll = 'http://www.mumstudents.org/api/login'; // path to the fetching resource 
         const response = await fetch(urll,
             {
                 method: 'POST',
@@ -121,7 +123,7 @@ window.onload = function () {
     token = `eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtd2EiLCJpc3N1ZWRBdCI6IjIwMTktMTEtMjciLCJ1c2VybmFtZSI6Im13cCJ9.U9ciwh5lcPwFlJdxhNQkeiMc7AMYAnawfKNidw8CNDpTIUjNBL_EtDqkXG4qGOF8H_Ve1S2Gg2PwmCYOkfgmWA`;
     // fetching the animations from the server 
     async function animationFetch() {
-        let url = "http://www.mumstudents.org/api/animation";
+        let url = "http://www.mumstudents.org/api/animation"; // path to the fetching resource
         const response = await fetch(url, {
             method: 'GET',
             headers: {
@@ -131,15 +133,15 @@ window.onload = function () {
 
         })
 
-        if (animationKey) clearInterval(animationKey)
-        let anim = await response.text();
-        let frames = anim.split('=====\n');
-        let framesLength = frames.length;
-        let currFrame = 0;
+         clearInterval(animationKey)
+        let animated = await response.text();
+        let eachFrames = animated.split('=====\n');
+        let framesLength = eachFrames.length;
+        let frame = 0;
         animationKey = setInterval(() => {
-            document.querySelector('#animtext').value = frames[currFrame];
-            currFrame++;
-            if (currFrame === framesLength) currFrame = 0;
+            document.querySelector('#animtext').value = eachFrames[frame];
+            frame++;
+            if (frame === framesLength) frame = 0;
         }, 200)
 
     }
