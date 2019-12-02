@@ -132,8 +132,8 @@ window.onload = function () {
             }
 
         })
-
-         clearInterval(animationKey)
+        
+         clearInterval(animationKey) // clears setInterval 
         let animated = await response.text();
         let eachFrames = animated.split('=====\n');
         let framesLength = eachFrames.length;
@@ -145,9 +145,5 @@ window.onload = function () {
         }, 200)
 
     }
-
-   
-
-
 
 }
