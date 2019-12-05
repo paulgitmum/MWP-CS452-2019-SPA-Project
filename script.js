@@ -38,6 +38,7 @@ window.onload = function () {
     <hr class="new1">
 `;
 
+
     //................................................
 
     let input = document.querySelector("#outlet");
@@ -48,7 +49,7 @@ window.onload = function () {
     next.addEventListener("click", logIn)
 
     //..............login page........................
-
+    display()
     function logIn() {
         // loading the animation page 
         input.innerHTML = animation;
@@ -56,18 +57,33 @@ window.onload = function () {
         addressFetch();  // invoking the geo- location 
         logInFetch();  // invoks the login page
         animationFetch()  // invoking the fetch animation function 
-        // adding the event listener to the refresh button 
-        // document.querySelector("#btnn").addEventListener("click", animationFetch);
+      
+
+        history.pushState({ welcome: 1 }, "title 1", "?page=1");
+        window.addEventListener('popstate', function (event) {
+            if (event.state.welcome === 1) {
+                clearInterval(animationKey)
+                display()
+            }
+        })
+
+
     }
 
     // displaying the log in page 
     function display() {
-        input.innerHTML = welcome;   
+        input.innerHTML = welcome;
         clearInterval(animationKey); // stops the ongoing process after loging out 
+
+
         //re load the login page 
-        let nextPage = document.querySelector("#btn");
+        //  history.pushState({ page: 2 }, "title 2", "?page=2");
+
+        nextPage = document.querySelector("#btn");
         nextPage.addEventListener("click", logIn)
+
     }
+
     // log in window 
     function backTo() {
         // adding an event listener to the logout page 
@@ -75,7 +91,11 @@ window.onload = function () {
         out.addEventListener("click", display);
         document.querySelector("#btnn").addEventListener("click", animationFetch);
 
+        // history.pushState({ page: 2 }, "title 2", "?page=2");
+        
+
     }
+
     // fetching geo- location from the server
     function addressFetch() {
         // used to get current position of devise
@@ -99,11 +119,12 @@ window.onload = function () {
             output.innerHTML = dis; // displays geo location 
         }
     }
+
     function failed(err) {
         document.querySelector("#head").innerHTML = `Welcome all from anonymus`;
     }
     // fetching the token from the server 
-    async function logInFetch() { 
+    async function logInFetch() {
         let urll = 'http://www.mumstudents.org/api/login'; // path to the fetching resource 
         const response = await fetch(urll,
             {
@@ -119,6 +140,7 @@ window.onload = function () {
         let rep = replyBody.token;
         console.log(rep)
     }
+
     // extracted token 
     token = `eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtd2EiLCJpc3N1ZWRBdCI6IjIwMTktMTEtMjciLCJ1c2VybmFtZSI6Im13cCJ9.U9ciwh5lcPwFlJdxhNQkeiMc7AMYAnawfKNidw8CNDpTIUjNBL_EtDqkXG4qGOF8H_Ve1S2Gg2PwmCYOkfgmWA`;
     // fetching the animations from the server 
@@ -132,8 +154,9 @@ window.onload = function () {
             }
 
         })
-        
-         clearInterval(animationKey) // clears setInterval 
+        //history.pushState({ page: 2 }, "title 2", "?page=2");
+
+        clearInterval(animationKey) // clears setInterval 
         let animated = await response.text();
         let eachFrames = animated.split('=====\n');
         let framesLength = eachFrames.length;
@@ -144,6 +167,9 @@ window.onload = function () {
             if (frame === framesLength) frame = 0;
         }, 200)
 
+
     }
+
+
 
 }
