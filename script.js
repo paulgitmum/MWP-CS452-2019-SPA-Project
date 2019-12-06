@@ -2,14 +2,15 @@
 window.onload = function () {
 
 
-    // declaration 
-    let token, animationKey, longitude, latitude;
+    // variable declaration 
+    let token, animationKey, longitude, latitude, userName, password;
 
     //...............login templet....................
     // login  templete with sample text
     let welcome = `
-     User Name <input type = "text"  placeholder="mwp"/><br><br>
-     Password <input type = "text" placeholder="123"/><br><br>
+       <link href="style.css" type="text/css" rel="stylesheet" />
+     User Name <input type = "text" id = "user"  placeholder="mwp"/><br><br>
+     Password <input type = "text" id = "pass" placeholder="123"/><br><br>
      <button id = "btn" class="btn btn-primary" >Login</button>
 
      <h1 class = "big" > Welcome to our beautiful city </h1> 
@@ -29,6 +30,7 @@ window.onload = function () {
 `;
     //...............Animation templet.................
     let animation = `  
+    <link href="style.css" type="text/css" rel="stylesheet" />
     <h3 id= "head"></h3>
     <textarea id = "animtext"rows="25" cols="50" "animtext"></textarea><br><br>
     <button id = "btnn"> Refresh </button>
@@ -38,62 +40,60 @@ window.onload = function () {
     <hr class="new1">
 `;
 
-
     //................................................
 
     let input = document.querySelector("#outlet");
-    // displays the welcome page 
     input.innerHTML = welcome;
 
     let next = document.querySelector("#btn");
     next.addEventListener("click", logIn)
 
     //..............login page........................
+
     display()
     function logIn() {
-        // loading the animation page 
-        input.innerHTML = animation;
-        backTo(); // calling back the logout page 
-        addressFetch();  // invoking the geo- location 
-        logInFetch();  // invoks the login page
-        animationFetch()  // invoking the fetch animation function 
-      
 
-        history.pushState({ welcome: 1 }, "title 1", "?page=1");
-        window.addEventListener('popstate', function (event) {
-            if (event.state.welcome === 1) {
-                clearInterval(animationKey)
-                display()
-            }
-        })
+        // DEMO AUTHENTICATION user name="mwp" password="123"
+        userName = document.getElementById('user').value;
+        password = document.getElementById('pass').value;
+        if (userName === "mwp" && password === "123") {
+            alert('WELCOME!!!')
 
+            // loading the animation page 
+            input.innerHTML = animation;
+            logOut(); // calling back the logout page 
+            addressFetch();  // invoking the geo- location 
+            logInFetch();  // invoks the login page
+            animationFetch()  // invoking the fetch animation function 
+
+            // track history of pages
+            history.pushState({ welcome: 1 }, "title 1", "?page=1");
+            window.addEventListener('popstate', function (event) {
+                if (event.state.welcome === 1) {
+                    clearInterval(animationKey)
+                    display()
+                }
+            })
+        } else {
+            alert("Enter correct password or user name");
+        }
 
     }
 
-    // displaying the log in page 
+// display page 
     function display() {
         input.innerHTML = welcome;
         clearInterval(animationKey); // stops the ongoing process after loging out 
-
-
-        //re load the login page 
-        //  history.pushState({ page: 2 }, "title 2", "?page=2");
-
         nextPage = document.querySelector("#btn");
         nextPage.addEventListener("click", logIn)
 
     }
-
-    // log in window 
-    function backTo() {
+    // logout page 
+    function logOut() {
         // adding an event listener to the logout page 
         const out = document.querySelector("#button");
         out.addEventListener("click", display);
         document.querySelector("#btnn").addEventListener("click", animationFetch);
-
-        // history.pushState({ page: 2 }, "title 2", "?page=2");
-        
-
     }
 
     // fetching geo- location from the server
@@ -108,7 +108,6 @@ window.onload = function () {
             let url = `http://open.mapquestapi.com/geocoding/v1/reverse?key=V8Fi8OQYMJJNcHAaqNuEmgdy4kQTwuB9&location=${latitude},${longitude}&includeRoadMetadata=true&includeNearestIntersection=true`;
             let response = await fetch(url)
             response = await response.json(); // expectin json file 
-            //console.log(response)
             // storing fetched elements in variables 
             const city = response.results[0].locations[0].adminArea5;
             const state = response.results[0].locations[0].adminArea3;
@@ -119,7 +118,7 @@ window.onload = function () {
             output.innerHTML = dis; // displays geo location 
         }
     }
-
+// error handling for the geo-location 
     function failed(err) {
         document.querySelector("#head").innerHTML = `Welcome all from anonymus`;
     }
@@ -145,7 +144,8 @@ window.onload = function () {
     token = `eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtd2EiLCJpc3N1ZWRBdCI6IjIwMTktMTEtMjciLCJ1c2VybmFtZSI6Im13cCJ9.U9ciwh5lcPwFlJdxhNQkeiMc7AMYAnawfKNidw8CNDpTIUjNBL_EtDqkXG4qGOF8H_Ve1S2Gg2PwmCYOkfgmWA`;
     // fetching the animations from the server 
     async function animationFetch() {
-        let url = "http://www.mumstudents.org/api/animation"; // path to the fetching resource
+        // path to the fetching resource
+        let url = "http://www.mumstudents.org/api/animation"; 
         const response = await fetch(url, {
             method: 'GET',
             headers: {
@@ -154,9 +154,8 @@ window.onload = function () {
             }
 
         })
-        //history.pushState({ page: 2 }, "title 2", "?page=2");
-
-        clearInterval(animationKey) // clears setInterval 
+         // clears setInterval
+        clearInterval(animationKey) 
         let animated = await response.text();
         let eachFrames = animated.split('=====\n');
         let framesLength = eachFrames.length;
@@ -169,7 +168,4 @@ window.onload = function () {
 
 
     }
-
-
-
 }
